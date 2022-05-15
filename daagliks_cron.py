@@ -5,6 +5,9 @@ from PySide6.QtWidgets import (QApplication, QDialog,
                                QLineEdit,
                                QVBoxLayout)
 
+from src.dao import SqliteDao
+from src.time_engine import TimeEngine
+
 
 class WhatsUpDialog(QDialog):
     num_grid_rows = 3
@@ -12,6 +15,8 @@ class WhatsUpDialog(QDialog):
 
     def __init__(self):
         super().__init__()
+        self._dao = SqliteDao()
+        self.timeEngine = TimeEngine(self._dao)
 
         edit_box = QGroupBox("What's updog?")
         edit_box_layout = QVBoxLayout()
@@ -34,11 +39,16 @@ class WhatsUpDialog(QDialog):
 
     def accept(self) -> None:
         print(self._editor.text())
+        self.finish()
         super().accept()
 
     def reject(self) -> None:
         print('Rejected')
+        self.finish()
         super().reject()
+
+    def finish(self):
+        self._dao.close()
 
 
 if __name__ == '__main__':
