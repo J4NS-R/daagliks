@@ -1,5 +1,14 @@
 # Daagliks
 
+## Usage
+
+### Testing
+
+```sh
+export PYTHONPATH=$PWD/test
+python3 daagliks_tests.py
+```
+
 ## Design
 
 * The `daagliks_cron.py` script runs on a user-configurable cron schedule. Something like every 15m during working

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from dao import Dao
+from src.dao import Dao
 
 # Ask user what they're doing
 # If answer:
@@ -28,16 +28,21 @@ class TimeEngine:
         last_log = self._dao.get_last_log()
         if last_log is None or last_log.date() < log_time.date():
             self._dao.create_act_today(log_activity, DEFAULT_ACTIVITY_START_DURATION)
+
         elif last_log > log_time:
             raise ValueError("Last log time is older than current activity log time.")
+
         elif last_log.date() == log_time.date():
             time_diff = log_time - last_log
             act_today = self._dao.get_act_today(log_activity)
+
             if act_today is not None:  # already logged today
                 new_duration = act_today.duration + time_diff
                 self._dao.update_act_duration_today(log_activity, new_duration)
+
             else:  # not logged today
                 self._dao.create_act_today(log_activity, time_diff)
+
         else:
             raise RuntimeWarning("Programmer fucked up. This branch should be impossible to reach.")
 
