@@ -1,9 +1,10 @@
 import sys
 from datetime import datetime
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QApplication, QDialog,
                                QDialogButtonBox, QGroupBox,
-                               QLineEdit,
+                               QCompleter, QLineEdit,
                                QVBoxLayout)
 
 from src.dao import SqliteDao
@@ -23,6 +24,12 @@ class WhatsUpDialog(QDialog):
         edit_box = QGroupBox("What's updog?")
         edit_box_layout = QVBoxLayout()
         self._editor = QLineEdit()
+
+        activities = self._dao.list_activities()
+        completer = QCompleter(activities)
+        completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self._editor.setCompleter(completer)
+
         edit_box_layout.addWidget(self._editor)
         edit_box.setLayout(edit_box_layout)
 
@@ -52,6 +59,7 @@ class WhatsUpDialog(QDialog):
         super().reject()
 
     def finish(self):
+        # self._activity_selector.close()
         self._dao.set_last_log(self.current_time)
         self._dao.close()
 

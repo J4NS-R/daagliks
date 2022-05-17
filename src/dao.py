@@ -15,19 +15,22 @@ class Dao:
         pass
 
     def get_last_log(self) -> datetime:
-        pass
+        raise NotImplemented("Sir, this is an interface.")
 
     def get_act_today(self, activity: str) -> ActivitySummary:
-        pass
+        raise NotImplemented("Sir, this is an interface.")
 
     def update_act_duration_today(self, activity: str, new_dur: timedelta):
-        pass
+        raise NotImplemented("Sir, this is an interface.")
 
     def create_act_today(self, activity: str, dur: timedelta):
-        pass
+        raise NotImplemented("Sir, this is an interface.")
 
     def set_last_log(self, when: datetime):
-        pass
+        raise NotImplemented("Sir, this is an interface.")
+
+    def list_activities(self) -> [str]:
+        raise NotImplemented("Sir, this is an interface.")
 
 
 class SqliteDao(Dao):
@@ -72,6 +75,10 @@ class SqliteDao(Dao):
     def set_last_log(self, when: datetime):
         self.db.execute("UPDATE last_log SET ts=? WHERE id=1", (int(when.timestamp()),))
         self.db.commit()
+
+    def list_activities(self) -> [str]:
+        curs = self.db.execute("SELECT activity_name FROM activities")
+        return [row[0] for row in curs]
 
     def close(self):
         self.db.close()
