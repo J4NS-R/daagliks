@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 
 from PySide6.QtWidgets import (QApplication, QDialog,
                                QDialogButtonBox, QGroupBox,
@@ -15,6 +16,7 @@ class WhatsUpDialog(QDialog):
 
     def __init__(self):
         super().__init__()
+        self.current_time = datetime.now()
         self._dao = SqliteDao()
         self.timeEngine = TimeEngine(self._dao)
 
@@ -38,16 +40,19 @@ class WhatsUpDialog(QDialog):
         self.setMinimumWidth(512)
 
     def accept(self) -> None:
-        print(self._editor.text())
+        act = self._editor.text()
+        print('Logging', act)
+        self.timeEngine.log_activity(act, self.current_time)
         self.finish()
         super().accept()
 
     def reject(self) -> None:
-        print('Rejected')
+        print('Logging nothing')
         self.finish()
         super().reject()
 
     def finish(self):
+        self._dao.set_last_log(self.current_time)
         self._dao.close()
 
 
